@@ -1,0 +1,45 @@
+server:
+    port: ${APP_PORT:8080}
+
+spring:
+
+
+    datasource:
+        url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:maney}
+        username: ${DB_USER:user}
+        password: ${DB_PASS:secret}
+        driver-class-name: com.mysql.cj.jdbc.Driver
+
+    flyway:
+        user: ${DB_USER:user}
+        password: ${DB_PASS:secret}
+        schemas: ${DB_NAME:maney}
+        locations: classpath:db/migration
+        table: schema_history
+
+    jpa:
+        open-in-view: false # to disable unnecessary log warning
+        show-sql: true # log sql queries
+        properties:
+            hibernate:
+                format_sql: true # beautify sql queries in log
+    messages:
+        encoding: utf-8
+
+    docker:
+        compose:
+            file: docker-compose-database.yaml
+            lifecycle-management: start_only # Avoid container stop each type the application stops
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        health:
+            show-details: always
+
+springdoc:
+    swagger-ui:
+        url: /openapi.yaml
